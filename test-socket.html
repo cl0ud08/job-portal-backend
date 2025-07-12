@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Socket.IO Job Portal</title>
+</head>
+<body>
+  <h1>📡 Job Application</h1>
+  <button id="applyJobBtn">Apply for Job</button>
+  <ul id="notifications"></ul>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    const socket = io('http://localhost:5000'); // use backend port
+
+    socket.on('connect', () => {
+      console.log('✅ Connected to backend');
+    });
+
+    document.getElementById('applyJobBtn').addEventListener('click', () => {
+      const application = {
+        user: 'Alice',
+        jobId: 'abc123'
+      };
+      socket.emit('job_applied', application);
+    });
+
+    socket.on('notify_employer', (data) => {
+      const li = document.createElement('li');
+      li.textContent = `${data.user} applied to job ${data.jobId}`;
+      document.getElementById('notifications').appendChild(li);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('❌ Disconnected from server');
+    });
+  </script>
+</body>
+</html>
